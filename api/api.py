@@ -1,7 +1,6 @@
 from fastapi import FastAPI,UploadFile,File
 from fastapi.responses import RedirectResponse
-from pdfminer.high_level import extract_text
-import os
+from utils.utils import read_file
 
 app = FastAPI()
 
@@ -13,9 +12,5 @@ async def redirect():
 @app.post("/upload")
 async def upload(file:UploadFile=File(...)):
     content = await file.read()
-    with open ("temp.pdf","wb") as temp_file:
-        temp_file.write(content)
+    return {"file_content":read_file(content=content)}
     
-    data_json = {"text":extract_text("temp.pdf")}
-    os.remove(path=os.getcwd()+"\\temp.pdf")
-    return data_json
