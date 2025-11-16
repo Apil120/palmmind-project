@@ -1,6 +1,6 @@
 from fastapi import FastAPI,UploadFile,File
 from fastapi.responses import RedirectResponse
-from utils.utils import read_file,get_metadata
+from utils.utils import read_file
 import os
 
 app = FastAPI()
