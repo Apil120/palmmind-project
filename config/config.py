@@ -11,7 +11,8 @@ class Settings(BaseSettings):
     chat_model: str = "gemini-2.5-flash"
 
     ollama_port:str = "11434"
-    fallback_model:str = "gemma3:4b"
+    fallback_chat_model:str = "gemma3:4b"
+    fallback_embed_model: str = "embeddinggemma:300m"
 
     class Config:
         env = ".env"
