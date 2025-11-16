@@ -1,9 +1,10 @@
 from pdfminer.high_level import extract_text
+from datetime import datetime
 import os
 
 
 def read_file(content: bytes, extension: str):
-    if extension== "pdf":
+    if extension == "pdf":
         with open("temp.pdf", "wb") as temp_file:
             temp_file.write(content)
 
@@ -18,3 +19,8 @@ def read_file(content: bytes, extension: str):
         return "Invalid file format!"
 
 
+def get_metadata(file):
+    upload_time = datetime.now().strftime("%Y-%m-%d")
+    file_name = file.filename
+
+    print(upload_time, file_name)
