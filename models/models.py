@@ -1,5 +1,6 @@
+from datetime import datetime
 from pydantic import BaseModel, Field
-from typing import List
+from typing import List,Optional
 from enum import Enum
 
 class ChunkingStrategy(str, Enum):
@@ -48,3 +49,13 @@ class BookingResponse(BaseModel):
     booking_id: str
     status: BookingStatus
     details: InterviewBooking
+
+
+class DocumentMetaData(BaseModel):
+    id: str
+    filename: str
+    upload_date: datetime
+    chunking_strategy: str
+    chunks_count: int
+    total_size: Optional[int] = None
+    metadata: Optional[dict[str,str]] = {}
