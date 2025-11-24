@@ -1,19 +1,15 @@
 # from pdfminer.high_level import extract_text
-# from datetime import datetime
+from datetime import datetime
 # import os
 
 
 def save_file(content: bytes, extension: str,filename:str):
+    time_of_creation = "-"+datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     if extension == "pdf":
-        with open(f"{filename}.pdf", "wb") as temp_file:
+        with open(f"{filename+time_of_creation}.pdf", "wb") as temp_file:
             temp_file.write(content)
     else:
-        with open("temp.txt", "w") as f:
+        with open(f"{filename+time_of_creation}.txt", "w") as f:
             f.write(content.decode())
 
-
-# def get_metadata(file):
-#     upload_time = datetime.now().strftime("%Y-%m-%d")
-#     file_name = file.filename
-
-#     print(upload_time, file_name)
+#TODO:: Make a new metadata wala funciton, utilise the variables from save_file wala func.
