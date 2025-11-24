@@ -1,7 +1,6 @@
-from fastapi import FastAPI,UploadFile,File
+from fastapi import FastAPI,UploadFile,File,status
 from fastapi.responses import RedirectResponse
-from utils.utils import read_file
-import os
+from .utils.utils import save_file
 
 app = FastAPI()
 
@@ -13,5 +12,7 @@ async def redirect():
 @app.post("/upload")
 async def upload(file:UploadFile=File(...)):
     content = await file.read()
-    extension = file.content_type.split("/")[1]
-    return read_file(content,extension=extension)
+    file_name = file.filename
+    filename, extension = file_name.split(".")[0], file_name.split(".")[1]
+    save_file(content,extension=extension,filename=filename)
+    return status.HTTP_200_OK
