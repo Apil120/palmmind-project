@@ -1,10 +1,6 @@
-# from pdfminer.high_level import extract_text
 from datetime import datetime
 
-# import os
-
-
-def create_metadata(content: bytes, extension: str, filename: str):
+def create_metadata(content: bytes, extension: str, filename: str,chunk_size:int|None,chunk_strat:str|None):
     details_dict = save_file(content=content, extension=extension, filename=filename)
     time_upload = details_dict.get(
         "creation_time", datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
