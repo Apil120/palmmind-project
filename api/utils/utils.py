@@ -1,5 +1,5 @@
 from datetime import datetime
-
+import os
 def create_metadata(content: bytes, extension: str, filename: str,chunk_size:int|None,chunk_strat:str|None):
     details_dict = save_file(content=content, extension=extension, filename=filename)
     time_upload = details_dict.get(
@@ -8,17 +8,19 @@ def create_metadata(content: bytes, extension: str, filename: str,chunk_size:int
 
     file_name = details_dict.get("filename", "temp")
 
-    print(time_upload)
-    print(file_name)
+    metadata = {"filename":file_name,"time":time_upload,"chunk_size":chunk_size,"chunking_strat":chunk_strat}
+
+    print(metadata)
 
 
 def save_file(content: bytes, extension: str, filename: str):
+    os.makedirs(name="uploads",exist_ok=True)
     final_name = filename + "---" + datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     if extension.lower() == "pdf":
-        with open(f"{final_name}.pdf", "wb") as temp_file:
+        with open(rf"uploads//{final_name}.pdf", "wb") as temp_file:
             temp_file.write(content)
     else:
-        with open(f"{final_name}.txt", "w") as f:
+        with open(rf"uploads//{final_name}.txt", "w") as f:
             f.write(content.decode())
 
     return {
