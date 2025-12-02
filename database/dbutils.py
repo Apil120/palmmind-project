@@ -15,3 +15,7 @@ def connect_db(database_name:str,MONGO_URI:str=MONGO_URI):
     DB = MongoClient(MONGO_URI)
 
     return DB[database_name]
+
+def save_to_database(collection,object):
+    collection.insert_one(object)
+    print("Saved Sucessfully!")

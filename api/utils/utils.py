@@ -1,5 +1,5 @@
 from datetime import datetime
-from database.dbutils import connect_db, CONFIG_DICT
+from database.dbutils import connect_db, CONFIG_DICT,save_to_database
 import os
 
 COLLECTIONS = CONFIG_DICT.get("collections")
@@ -14,7 +14,7 @@ def create_metadata(
     filename: str,
     chunk_size: int | None,
     chunk_strat: str | None,
-    database_name:str = METADATA_COLLECTION
+    database_name:str = "palmmind_project"
 ):
     DATABASE = connect_db(database_name=database_name)
     details_dict = save_file(content=content, extension=extension, filename=filename)
@@ -30,6 +30,8 @@ def create_metadata(
         "chunk_size": chunk_size,
         "chunking_strat": chunk_strat,
     }
+    save_to_database(collection=DATABASE[METADATA_COLLECTION],object=metadata)
+
 
 
 def save_file(content: bytes, extension: str, filename: str):
