@@ -1,11 +1,25 @@
 from datetime import datetime
-from database.dbutils import connect_db, CONFIG_DICT,save_to_database
+from database.dbutils import connect_db,save_to_database,CONFIG_DICT
 import os
 
 COLLECTIONS = CONFIG_DICT.get("collections")
 METADATA_COLLECTION = COLLECTIONS.get("metadata_database")
 BOOKING_COLLECTION = COLLECTIONS.get("bookings_database")
 
+def save_file(content: bytes, extension: str, filename: str):
+    os.makedirs(name="uploads", exist_ok=True)
+    final_name = filename + "---" + datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    if extension.lower() == "pdf":
+        with open(rf"uploads//{final_name}.pdf", "wb") as temp_file:
+            temp_file.write(content)
+    else:
+        with open(rf"uploads//{final_name}.txt", "w") as f:
+            f.write(content.decode())
+
+    return {
+        "filename": final_name.split("---")[0] + "." + extension,
+        "creation_time": final_name.split("---")[1],
+    }
 
 
 def create_metadata(
@@ -34,17 +48,3 @@ def create_metadata(
 
 
 
-def save_file(content: bytes, extension: str, filename: str):
-    os.makedirs(name="uploads", exist_ok=True)
-    final_name = filename + "---" + datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    if extension.lower() == "pdf":
-        with open(rf"uploads//{final_name}.pdf", "wb") as temp_file:
-            temp_file.write(content)
-    else:
-        with open(rf"uploads//{final_name}.txt", "w") as f:
-            f.write(content.decode())
-
-    return {
-        "filename": final_name.split("---")[0] + "." + extension,
-        "creation_time": final_name.split("---")[1],
-    }
