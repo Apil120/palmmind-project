@@ -46,9 +46,9 @@ def create_metadata(
         "time": time_upload,
         "chunk_size": chunk_size,
         "chunking_strat": chunk_strat,
-        "id":...
+        "id":f"FILE-{len(details_dict.get("uploads_contents"))}-{extension}"
     }
     save_to_database(collection=DATABASE[METADATA_COLLECTION],object=metadata)
 
-def create_chunks(path:str,chunk_size:int,chunk_strat:str):
+def create_chunks(name:str,chunk_size:int,chunk_strat:str):
     ...
