@@ -1,6 +1,6 @@
 from fastapi import FastAPI,UploadFile,File,status,Form
 from fastapi.responses import RedirectResponse
-from .utils.utils import create_metadata
+from .utils.utils import create_metadata,extract_text_from_files
 from models.models import ChunkingStrategy
 app = FastAPI()
 

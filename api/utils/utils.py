@@ -1,12 +1,13 @@
 from datetime import datetime
 from database.dbutils import connect_db,save_to_database,query_database,CONFIG_DICT
+from pdfminer.high_level import extract_text
 import os
 
 COLLECTIONS = CONFIG_DICT.get("collections")
 METADATA_COLLECTION = COLLECTIONS.get("metadata_database")
 BOOKING_COLLECTION = COLLECTIONS.get("bookings_database")
 
-def save_file(content: bytes, extension: str, filename: str)->dict[str,str]:
+def save_file(content: bytes, extension: str, filename: str)->dict[str,str |list[str]|bytes]:
     os.makedirs(name="uploads", exist_ok=True)
     final_name = filename + "---" + datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     if extension.lower() == "pdf":
@@ -19,7 +20,7 @@ def save_file(content: bytes, extension: str, filename: str)->dict[str,str]:
     return {
         "filename": final_name.split("---")[0] + "." + extension,
         "creation_time": final_name.split("---")[1],
-        "uploads_contents":os.listdir("uploads")
+        "uploads_contents":os.listdir("uploads"),
     }
 
 
@@ -50,5 +51,15 @@ def create_metadata(
     }
     save_to_database(collection=DATABASE[METADATA_COLLECTION],object=metadata)
 
-def create_chunks(name:str,chunk_size:int,chunk_strat:str):
-    ...
+
+def extract_text_from_files(path:str):
+    extension = path.split(".")[1]
+
+    if extension.lower() == "pdf":
+        data = extract_text(pdf_file=path)
+        return data
+    
+    with open(path,"r") as f:
+        data = f.read()
+
+    return data
