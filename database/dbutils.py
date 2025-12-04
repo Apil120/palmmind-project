@@ -18,7 +18,7 @@ def connect_db(database_name:str,MONGO_URI:str=MONGO_URI):
 
 def save_to_database(collection,object):
     collection.insert_one(object)
-    print("Saved Sucessfully!")
+    print("Saved Sucessfully!!")
 
 def query_database(collection,query:dict[str,str],num_results:int):
     results = collection.find(query).limit(num_results)

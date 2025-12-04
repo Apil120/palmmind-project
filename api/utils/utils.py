@@ -49,7 +49,9 @@ def create_metadata(
         "chunking_strat": chunk_strat,
         "id":f"FILE-{len(details_dict.get("uploads_contents"))}-{extension}"
     }
-    save_to_database(collection=DATABASE[METADATA_COLLECTION],object=metadata)
+    file_id = save_to_database(collection=DATABASE[METADATA_COLLECTION],object=metadata)
+
+    print(file_id)
 
 
 def extract_text_from_files(path:str):
@@ -63,3 +65,6 @@ def extract_text_from_files(path:str):
         data = f.read()
 
     return data
+
+def create_chunks(chunk_size:int,chunking_strat:str,path:str):
+    ...
