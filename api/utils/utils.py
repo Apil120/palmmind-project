@@ -1,13 +1,18 @@
 from datetime import datetime
-from database.dbutils import connect_db,save_to_database,query_database,CONFIG_DICT
+from database.dbutils import connect_db, save_to_database,  CONFIG_DICT
 from pdfminer.high_level import extract_text
 import os
+import re
+import nltk
 
 COLLECTIONS = CONFIG_DICT.get("collections")
 METADATA_COLLECTION = COLLECTIONS.get("metadata_database")
 BOOKING_COLLECTION = COLLECTIONS.get("bookings_database")
 
-def save_file(content: bytes, extension: str, filename: str)->dict[str,str |list[str]|bytes]:
+
+def save_file(
+    content: bytes, extension: str, filename: str
+) -> dict[str, str | list[str] | bytes]:
     os.makedirs(name="uploads", exist_ok=True)
     final_name = filename + "---" + datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     if extension.lower() == "pdf":
@@ -18,9 +23,8 @@ def save_file(content: bytes, extension: str, filename: str)->dict[str,str |list
             f.write(content.decode())
 
     return {
-        "filename": final_name.split("---")[0] + "." + extension,
-        "creation_time": final_name.split("---")[1],
-        "uploads_contents":os.listdir("uploads"),
+        "filename": final_name + "." + extension,
+        "uploads_contents": os.listdir("uploads"),
     }
 
 
@@ -30,41 +34,54 @@ def create_metadata(
     filename: str,
     chunk_size: int | None,
     chunk_strat: str | None,
-    database_name:str = "palmmind_project"
+    chunk_overlap:int|None,
+    database_name: str = "palmmind_project",
 ):
-    
-    
+
     DATABASE = connect_db(database_name=database_name)
     details_dict = save_file(content=content, extension=extension, filename=filename)
-    time_upload = details_dict.get(
-        "creation_time", datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    )
 
     file_name = details_dict.get("filename", "temp")
-
+    time_upload = file_name.split("---")[1]
     metadata = {
         "filename": file_name,
         "time": time_upload,
         "chunk_size": chunk_size,
         "chunking_strat": chunk_strat,
-        "id":f"FILE-{len(details_dict.get("uploads_contents"))}-{extension}"
+        "overlap":chunk_overlap,
+        "id": f"FILE-{len(details_dict.get("uploads_contents"))}-{extension}",
     }
-    file_id = save_to_database(collection=DATABASE[METADATA_COLLECTION],object=metadata)
+    create_chunks(path=os.path.join("uploads", file_name),chunk_size=chunk_size,chunk_strat=chunk_strat)
+    save_to_database(collection=DATABASE[METADATA_COLLECTION], object=metadata)
 
-    print(file_id)
+def fixed_chunking(data,chunk_size):
+    data = re.sub(r"s+"," ",data).strip()
+    chunks = [data[i:i+chunk_size] for i in range(0, len(data),chunk_size)]
+    return chunks
 
+def create_chunks(chunk_size: int, chunk_strat: str, path: str): 
 
-def extract_text_from_files(path:str):
     extension = path.split(".")[1]
 
     if extension.lower() == "pdf":
         data = extract_text(pdf_file=path)
-        return data
-    
-    with open(path,"r") as f:
+
+    with open(path, "r") as f:
         data = f.read()
 
-    return data
 
-def create_chunks(chunk_size:int,chunking_strat:str,path:str):
-    ...
+    if not data:
+        return "Text could not be extracted!"
+    
+    if chunk_strat.lower() == "fixed_size":
+       chunks = fixed_chunking(data,chunk_size)
+       return chunks
+    
+
+    semantic_chunking(data,chunk_size) #TODO: Implement Semantic chunking
+    
+    
+
+    
+
+    
