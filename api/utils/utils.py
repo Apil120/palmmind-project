@@ -85,13 +85,12 @@ def semantic_chunking(data,similarity_threshold = 0.70):
 
         if similarity<similarity_threshold:
             chunks.append(" ".join(current_chunk))
-            current_chunk = sentences[i]
+            current_chunk = [sentences[i]]
 
         else:
             current_chunk.append(sentences[i])
 
-        if current_chunk:
-            chunks.append(" ".join(current_chunk))
+    chunks.append(" ".join(current_chunk))
 
     return chunks
 
@@ -116,9 +115,3 @@ def create_chunks(chunk_size: int, chunk_strat: str, path: str):
 
     chunks = semantic_chunking(data)
     return chunks
-    
-    
-
-    
-
-    
